@@ -5,7 +5,7 @@ Infinite Memory Chatbot is a Python-based chatbot leveraging OpenAI's GPT-4 lang
 ## Requirements
 
 - Python 3.8 or later
-- Packages: os, typing, datetime, pickle, json, pinecone, time, uuid, sqlite3, selenium, webdriver_manager, and openai
+- Packages: os, typing, datetime, pickle, json, pinecone, time, uuid, sqlite3, selenium, and openai
 
 Make sure to install the required packages using pip:
 
