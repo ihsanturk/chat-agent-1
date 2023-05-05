@@ -1,6 +1,6 @@
 # Infinite Memory Chatbot
 
-Infinite Memory Chatbot is a Python-based chatbot leveraging OpenAI's GPT-4 language model and the Pinecone vector database to create a conversation bot that remembers past interactions and uses this information to generate more relevant and informed responses.
+Infinite Memory Chatbot is a Python-based chatbot leveraging OpenAI's GPT-4 language model and the Pinecone vector database to create a conversation bot that remembers past interactions and uses this information to generate more relevant and informed responses. Much of the basis for the architecture comes from David Shapiro https://github.com/daveshap/raven.
 
 ## Requirements
 
