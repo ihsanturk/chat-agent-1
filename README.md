@@ -26,7 +26,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-Run the `chat.py` from this project's directory:
+Run `chat.py` from this project's directory:
 
 ```bash
 python chat.py
