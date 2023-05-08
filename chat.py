@@ -325,8 +325,8 @@ if __name__ == '__main__':
             results = vecdb.query(vector=vector, top_k=top_k, include_values=True, include_metadat=True)
 
             # create final GPT prompt
-            if len(str(currentConvo)) >= 14000:
-                conversation = alignmentPrompt + loadRes(results) + currentConvo[-12000:] + makePostPrompt()
+            if len(currentConvo) >= 200:
+                conversation = alignmentPrompt + loadRes(results) + currentConvo[-200:] + makePostPrompt()
             else:
                 conversation = alignmentPrompt + loadRes(results) + currentConvo + makePostPrompt()
 
@@ -463,5 +463,4 @@ if __name__ == '__main__':
 
             # print assistant response
             print('\nASSISTANT: '+formResponse.split(sep=': ', maxsplit=1)[1])
-
 
