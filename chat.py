@@ -182,7 +182,7 @@ if __name__ == '__main__':
     while True:
         # main loop
 
-        userIn = input('\nYOU: ')
+        userIn = input('\nYOU: ').lower()
 
         # check for special instructions from user
         if userIn == '/q/':
@@ -198,10 +198,17 @@ if __name__ == '__main__':
                 payload = []
                 payload.append((identifier, vector))
                 vecdb.upsert(payload)
-            print('Done')
+            print('\nDone\n')
             exit()
 
-        elif userIn == '/m/':
+        elif userIn == '/qd/':
+            if input('\nExit without upserting current session? (y/n) ').lower() == 'y':
+                print('\nExited without upsert.\n')
+                exit()
+            else:
+                print('\nAborted.')
+
+        elif userIn.lower() == '/m/':
             # select GPT model. refer to openAI documentation for acceptable values
 
             model = input('\nSelect GPT Model: ')
@@ -212,25 +219,25 @@ if __name__ == '__main__':
 
             try:
                 exec(input('\nPYTHON EXECUTE: '))
-                print('Done')
+                print('\nDone')
             except:
-                print('Error occurred in execution.')
+                print('\nError occurred in execution.')
 
         elif userIn == '/max/':
             # set max GPT response tokens
 
             try:
                 max_tokens = int(input('\nSet max response tokens: '))
-                print('Done')
+                print('\nDone')
             except:
-                print('Error: max_tokens must be an int.')
+                print('\nError: max_tokens must be an int.')
 
         elif userIn == '/temp/':
             # set GPT temperature
 
             try:
                 temperature=float(input('\nSet temperature: '))
-                print('Done')
+                print('\nDone')
             except:
                 print('Error: temperature must be an int.')
 
@@ -239,7 +246,7 @@ if __name__ == '__main__':
 
             try:
                 freq_p=float(input('\nSet frequency penalty: '))
-                print('Done')
+                print('\nDone')
             except:
                 print('Error: freq_p must be an int.')
 
@@ -248,25 +255,39 @@ if __name__ == '__main__':
 
             try:
                 searchLength = int(input('\nSet search page text max length: '))
-                print('Done')
+                print('\nDone')
             except:
-                print('Error')
+                print('\nError')
 
         elif userIn == '/top_k/':
             # set number of vectors to return in Pinecone query
 
             try:
                 top_k = int(input('\nSet top_k: '))
-                print('Done. top_k = '+str(top_k))
+                print('\nDone. top_k = '+str(top_k))
             except:
-                print('Error')
+                print('\nError')
 
         elif userIn == '/d/':
             try:
                 currentText.pop()
-                print(f'Deleted most recent message: ', currentConvo.pop())
+                print(f'\nDeleted most recent message: ', currentConvo.pop())
             except:
-                print('Error: could not delete recent message.')
+                print('\nError: could not delete recent message.')
+
+        elif userIn == '/upsert/':
+            print('\nUpserting current conversation...')
+
+            for i in range(len(ids)):
+                identifier = ids[i]
+                chat = currentText[i] # upserted records do not include timestamp and speaker
+                vector = embedAda(chat)
+                payload = []
+                payload.append((identifier, vector))
+                vecdb.upsert(payload)
+            # reset the list so that messages are not upserted twice
+            currentText = []
+            print('\nDone')
 
         else:
             # store user input to LTM database
@@ -304,7 +325,10 @@ if __name__ == '__main__':
             results = vecdb.query(vector=vector, top_k=top_k, include_values=True, include_metadat=True)
 
             # create final GPT prompt
-            conversation = alignmentPrompt + loadRes(results) + currentConvo + makePostPrompt()
+            if len(str(currentConvo)) >= 14000:
+                conversation = alignmentPrompt + loadRes(results) + currentConvo[-12000:] + makePostPrompt()
+            else:
+                conversation = alignmentPrompt + loadRes(results) + currentConvo + makePostPrompt()
 
             # create GPT chat completion
             chatResponse = chatComplete(conversation, model=model, max_tokens=max_tokens, temperature=temperature, top_p=top_p, freq_p=freq_p, pres_p=pres_p)
@@ -371,7 +395,7 @@ if __name__ == '__main__':
                     if input('\nSend this email? Y to confirm, any other input to cancel: ') == 'Y':
                         sendMail(mailRecipient[0], mailSubject[0], mailContent[0])
                 except:
-                    print('Error parsing sendmail command.')
+                    print('\nError parsing sendmail command.')
 
             elif responseCheck[0] == '/;CALENDAR':
                 # Google calendar AEI
