@@ -1,0 +1,8 @@
+pinecone-client
+sqlite3
+selenium
+openai
+google
+google_auth_oauthlib
+googleapiclient
+email
