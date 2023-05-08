@@ -123,6 +123,7 @@ def loadRes(results):
     else:
         return [{'role':'system', 'content': 'REMEMBER NOT TO INCLUDE "ASSISTANT" OR THE TIMESTAMP AT THE BEGINNING OF YOUR RESPONSE. ONLY INCLUDE YOUR ACTUAL RESPONSE!!!\n\n'}]
 
+
 def calParse(text):
     # parse calendar AEI commands
     # takes: string formatted as a calendar AEI command beginning with an action
@@ -288,8 +289,12 @@ if __name__ == '__main__':
             cur.execute('INSERT INTO ChatHistory (id, message, speaker, timestamp, timestring) VALUES (?, ?, ?, ?, ?)', (identifier, message, 'USER', timestamp, timestring))
             conn.commit()
 
-            # embed user message and query Pinecone for relevant LTM data
-            vector = embedAda(userIn)
+            # embed up to last 4 messages in conversation and query Pinecone for relevant LTM data
+            if len(currentText) >= 4:
+                vector = embedAda('\n\n'.join([item for item in currentText[-4:]]))
+            else:
+                vector = embedAda('\n\n'.join([item for item in currentText[-len(currentText):]]))
+
             results = vecdb.query(vector=vector, top_k=top_k, include_values=True, include_metadat=True)
 
             # create final GPT prompt
@@ -359,6 +364,13 @@ if __name__ == '__main__':
                     print('\nDraft email TO ',mailRecipient[0],', SUBJECT: ', mailSubject[0], ', CONTENT: ', mailContent[0])
                     if input('\nSend this email? Y to confirm, any other input to cancel: ') == 'Y':
                         sendMail(mailRecipient[0], mailSubject[0], mailContent[0])
+
+                        # update completion prompt to include the search results
+                        conversation = alignmentPrompt + loadRes(results) + currentConvo + resultSnippet + makePostPrompt() # try oring current_convo with something to handle when its an empty list
+
+                        # create new response to user incorporating google search knowledge
+                        chatResponse = chatComplete(conversation, model=model, max_tokens=max_tokens, temperature=temperature, top_p=top_p, freq_p=freq_p, pres_p=pres_p)
+                        responseText = chatResponse.choices[0].message.content
                 except:
                     print('Error parsing sendmail command.')
 
