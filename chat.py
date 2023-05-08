@@ -271,6 +271,7 @@ if __name__ == '__main__':
         elif userIn == '/d/':
             try:
                 currentText.pop()
+                ids.pop()
                 print(f'\nDeleted most recent message: ', currentConvo.pop())
             except:
                 print('\nError: could not delete recent message.')
@@ -287,6 +288,7 @@ if __name__ == '__main__':
                 vecdb.upsert(payload)
             # reset the list so that messages are not upserted twice
             currentText = []
+            ids = []
             print('\nDone')
 
         else:
@@ -463,4 +465,11 @@ if __name__ == '__main__':
 
             # print assistant response
             print('\nASSISTANT: '+formResponse.split(sep=': ', maxsplit=1)[1])
+
+
+
+
+
+
+
 
