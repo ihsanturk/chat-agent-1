@@ -42,7 +42,7 @@ freq_p=0.0
 pres_p=0.0
 
 # Pinecone vector query limit
-top_k = 15
+top_k = 20
 
 # how many characters to read from Google results page when search AEI is called
 searchLength = 1000
@@ -260,6 +260,13 @@ if __name__ == '__main__':
                 print('Done. top_k = '+str(top_k))
             except:
                 print('Error')
+
+        elif userIn == '/d/':
+            try:
+                currentText.pop()
+                print(f'Deleted most recent message: ', currentConvo.pop())
+            except:
+                print('Error: could not delete recent message.')
 
         else:
             # store user input to LTM database
