@@ -29,6 +29,9 @@ my_email = 'YOUR_GMAIL'
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/calendar.events']
 
+# lists of AEI commands the agent can call, and arguments it can pass
+aeiCommands = {'/;SENDMAIL;/':None, '/;GOOGSEARCH;/':None, '/;CALENDAR;/':{'/;VIEW;/':''}}
+
 def sendMail(recipient, subject, content):
     """Create and send an email message
     Print the returned  message id
@@ -232,3 +235,25 @@ def calendar(action, start, end=None, maxResults=10, loc=None, name='Autogenerat
 
     except HttpError as error:
         print('An error occurred: %s' % error)
+
+
+def wtxt(text, fid):
+    """/;WTEXT;/<Text to write>/;PATH;/<Path to write to>"""
+    try:
+        with open('./'+fid+'.txt', 'w') as f:
+            f.write(text)
+        print(f'\nText written to {fid}.txt.')
+        return 'You successfully wrote the text file.'
+    except:
+        print('\nAn error occurred in writing the text file.')
+        return 'An error occurred in writing the text file.'
+
+def rtxt(fid):
+    try:
+        with open('./'+fid+'.txt', 'r') as f:
+            text = f.read()
+        print(f'\nAssistant read {fid}.txt.')
+        return 'You successfully read the text file. Its content is as follows:\n\n'+text
+    except:
+        print(f'\nAn error occurred in reading {fid}.txt.')
+        return 'An error occurred in reading the text file.'
