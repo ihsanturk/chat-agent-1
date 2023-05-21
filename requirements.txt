@@ -3,5 +3,6 @@ selenium
 openai
 google
 google_auth_oauthlib
-googleapiclient
+google-api-python-client
+google-auth-httplib2
 email
