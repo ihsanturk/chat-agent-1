@@ -1,5 +1,4 @@
 pinecone-client
-sqlite3
 selenium
 openai
 google
